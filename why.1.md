@@ -1,31 +1,31 @@
----
-title: 'WHY(1)'
-author:
-    - Miek Gieben
-date: December 2023
----
+%%%
+title = "why 1"
+area = "Access Control Lists"
+workgroup = "ACL File Utilities"
+date = 2023-12-18
+%%%
 
 # NAME
 
-why - explain why a user can or cannot access a file
+why - explain why a user has access to a file taking access control lists into account
 
 # SYNOPSIS
 
-**why** [**OPTIONS**] **USERNAME** [*FILE...*]
+**why** **USERNAME** [*FILE...*]
 
 # DESCRIPTION
 
-# OPTIONS
+**Why** will print what access **USERNAME** has on each *FILE*. If Access Control Lists (ACLs) are
+set on the file they are taking into account. If no *FILE* is given the current directory is used.
 
-`-ast`
+# EXAMPLES
 
-:  print abstract syntax tree and exit
-
-`-fragment`
-
-:  don't create a full document
-
+examples
 
 # ALSO SEE
 
 acl(5) explains the algorithm of `why`.
+
+# TODO
+
+The text output of **why** will like change significantly.
