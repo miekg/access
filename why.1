@@ -3,7 +3,7 @@
 
 .SH "NAME"
 .PP
-why \- explain why a user can or cannot access a file
+why \- explain why a user has access to a file taking access control lists into account
 
 .SH "SYNOPSIS"
 .PP
@@ -11,15 +11,69 @@ why \- explain why a user can or cannot access a file
 
 .SH "DESCRIPTION"
 .PP
-\fBWhy\fP will print what access \fBUSERNAME\fP has on each \fIFILE\fP. If no \fIFILE\fP is given the current
-directory is used.
+\fBWhy\fP will print what access \fBUSERNAME\fP has on each \fIFILE\fP. If Access Control Lists (ACLs) are
+set on the file they are taking into account. If no \fIFILE\fP is given the current directory is used.
+For each \fIFILE\fP given it outputs a line:
+
+.PP
+.RS
+
+.nf
+\-rw\- miek file # ACL\_USER\_OBJ (miek is owner)
+
+.fi
+.RE
+
+.PP
+Which states:
+
+.TP
+\fB\fC-rw-\fR
+the first character is 'd' for directories and '\-' for files. Like ls(1). The next 3 are the
+effective permissions (from the mask) for this user (read, write, execute).
+.TP
+\fB\fCmiek\fR
+the \fBUSERNAME\fP given as parameter.
+.TP
+\fB\fCfile\fR
+the \fIFILE\fP currently being printed.
+.TP
+\fB\fC# ACL_....\fR
+explanation on why this user access. If this ends \fB\fCwith -rw-\fR (or any other permissions) it lists
+the actual (unmasked) permission.
+
+
+.PP
+\fBWhy\fP can output the following:
+
+.PP
+.RS
+
+.nf
+\-r\-\- user file # ACL\_GROUP (user via "xxxxx" with \-rw\-)
+\-r\-\- user file # ACL\_GROUP\_OBJ (user is group\-owner via "xxxxxx" with \-rw\-)
+\-r\-\- user file # ACL\_USER\_OBJ (user is owner)
+\-r\-\- user file # ACL\_USER  (user with \-rw\-)
+\-r\-\- user file # ACL\_OTHER
+
+.fi
+.RE
 
 .SH "EXAMPLES"
+.PP
+Show the access the \fIgrafana\fP user has on \fB\fCmy-file\fR:
+
+.PP
+.RS
+
+.nf
+% why grafana file
+\-rw\- grafana file # ACL\_GROUP (grafana is in group ACL via "grafana" with \-rw\-)
+
+.fi
+.RE
+
 .SH "ALSO SEE"
 .PP
 acl(5) explains the algorithm of \fB\fCwhy\fR.
-
-.SH "TODO"
-.PP
-The text output of \fBwhy\fP will like change significantly.
 
