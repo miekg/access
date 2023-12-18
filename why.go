@@ -85,7 +85,7 @@ func main() {
 					fmt.Printf("%s # ACL_USER (%s with %s%s)\n", prefix(mask[0].Perms), username, dir, toString(e.Perms))
 					continue
 				}
-				fmt.Printf("%s # ACL_USER (%s is in user ACL)\n", prefix(e.Perms), username)
+				fmt.Printf("%s # ACL_USER (%s)\n", prefix(e.Perms), username)
 				continue
 			}
 		}
@@ -95,7 +95,7 @@ func main() {
 			// mask
 			for _, g := range groupids {
 				if x := m[acl.TagGroupObj][0]; x.Qualifier == g {
-					fmt.Printf("%s # ACL_GROUP_OBJ (%s is group-owner via %q with %s%s)\n", prefix(mask[0].Perms), username, g, dir, toString(x.Perms))
+					fmt.Printf("%s # ACL_GROUP_OBJ (%s via group %q with %s%s)\n", prefix(mask[0].Perms), username, g, dir, toString(x.Perms))
 					continue
 				}
 			}
@@ -103,9 +103,8 @@ func main() {
 			for _, g := range groupids {
 				for _, e := range m[acl.TagGroup] {
 					if e.Qualifier == g {
-						// print ACL mask
 						group, _ := user.LookupGroupId(g)
-						fmt.Printf("%s # ACL_GROUP (%s via %q with %s%s)\n", prefix(mask[0].Perms), username, group.Name, dir, toString(e.Perms))
+						fmt.Printf("%s # ACL_GROUP (%s via group %q with %s%s)\n", prefix(mask[0].Perms), username, group.Name, dir, toString(e.Perms))
 						continue
 					}
 				}
@@ -113,7 +112,7 @@ func main() {
 		} else {
 			for _, g := range groupids {
 				if x := m[acl.TagGroupObj][0]; x.Qualifier == g {
-					fmt.Printf("%s # ACL_GROUP_OBJ (%s is group-owner via %q)\n", prefix(x.Perms), username, g)
+					fmt.Printf("%s # ACL_GROUP_OBJ (%s via group %q)\n", prefix(x.Perms), username, g)
 					continue
 				}
 			}

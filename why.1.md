@@ -43,12 +43,11 @@ the actual (unmasked) permission.
 
 **Why** can output the following:
 
--r-- user file # ACL_GROUP (user via "xxxxx" with -rw-)
--r-- user file # ACL_GROUP_OBJ (user is group-owner via "xxxxxx" with -rw-)
--rw- user file # ACL_USER_OBJ (user is owner)
--r-- user file # ACL_USER  (user with -rw-)
--r-- user file # ACL_OTHER
-
+    -r-- user file # ACL_GROUP (user via "xxxxx" with -rw-)
+    -r-- user file # ACL_GROUP_OBJ (user is group-owner via "xxxxxx" with -rw-)
+    -r-- user file # ACL_USER_OBJ (user is owner)
+    -r-- user file # ACL_USER  (user with -rw-)
+    -r-- user file # ACL_OTHER
 
 # EXAMPLES
 
@@ -56,9 +55,6 @@ Show the access the *grafana* user has on `my-file`:
 
     % why grafana file
     -rw- grafana file # ACL_GROUP (grafana is in group ACL via "grafana" with -rw-)
-
-
-
 
 # ALSO SEE
 
