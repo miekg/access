@@ -17,15 +17,49 @@ why - explain why a user has access to a file taking access control lists into a
 
 **Why** will print what access **USERNAME** has on each *FILE*. If Access Control Lists (ACLs) are
 set on the file they are taking into account. If no *FILE* is given the current directory is used.
+For each *FILE* given it outputs a line:
+
+    -rw- miek file # ACL_USER_OBJ (miek is owner)
+
+Which states:
+
+`-rw-`
+
+: the first character is 'd' for directories and '-' for files. Like ls(1). The next 3 are the
+effective permissions (from the mask) for this user (read, write, execute).
+
+`miek`
+
+: the **USERNAME** given as parameter.
+
+`file`
+
+: the *FILE* currently being printed.
+
+`# ACL_....`
+
+: explanation on why this user access. If this ends `with -rw-` (or any other permissions) it lists
+the actual (unmasked) permission.
+
+**Why** can output the following:
+
+-r-- user file # ACL_GROUP (user via "xxxxx" with -rw-)
+-r-- user file # ACL_GROUP_OBJ (user is group-owner via "xxxxxx" with -rw-)
+-rw- user file # ACL_USER_OBJ (user is owner)
+-r-- user file # ACL_USER  (user with -rw-)
+-r-- user file # ACL_OTHER
+
 
 # EXAMPLES
 
-examples
+Show the access the *grafana* user has on `my-file`:
+
+    % why grafana file
+    -rw- grafana file # ACL_GROUP (grafana is in group ACL via "grafana" with -rw-)
+
+
+
 
 # ALSO SEE
 
 acl(5) explains the algorithm of `why`.
-
-# TODO
-
-The text output of **why** will like change significantly.

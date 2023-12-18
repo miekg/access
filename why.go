@@ -25,8 +25,6 @@ func main() {
 
 	flag.Parse()
 	username := flag.Arg(0)
-	path := flag.Arg(1)
-
 	if username == "" {
 		log.Fatalf("%s: missing user", cmd)
 	}
@@ -40,71 +38,91 @@ func main() {
 		log.Fatalf("%s: cannot get group IDs for %q: %s", cmd, username, err)
 	}
 
-	if path == "" {
-		log.Fatalf("%s: missing path", cmd)
+	paths := flag.Args()
+	if len(paths) == 1 {
+		paths = []string{"."}
+	} else {
+		paths = paths[1:]
 	}
-
-	a, err := acl.Get(path)
-	if err != nil {
-		log.Fatalf("%s: cannot get acl: %q: %s", cmd, path, err)
-	}
-
-	m, err := aclToMap(a, path)
-	if err != nil {
-		log.Fatalf("%s: %s", cmd, err)
-	}
-	// First check ACL_USER_OBJ
-	if x := m[acl.TagUserObj][0]; x.Qualifier == u.Uid {
-		fmt.Printf("%s for %q on %q\tvia ACL_USER_OBJ (%s is owner)\n", toString(x.Perms), username, path, username)
-		return
-	}
-	// Next ACL_USER (specific users that may have access)
-	for _, e := range m[acl.TagUser] {
-		if e.Qualifier == u.Uid {
-			fmt.Printf("%s for %q on %q\tvia ACL_USER (%s is in user ACL list)\n", toString(e.Perms), username, path, username)
-			mask := m[acl.TagMask]
-			if len(mask) > 0 {
-				fmt.Printf("%s effective via mask\n", toString(mask[0].Perms))
-			}
-			return
+	length := 0
+	for _, path := range paths {
+		if x := len(path); x > length {
+			length = x
 		}
 	}
+	for _, path := range paths {
+		a, err := acl.Get(path)
+		if err != nil {
+			log.Fatalf("%s: cannot get acl: %q: %s", cmd, path, err)
+		}
 
-	// If still here we are checking the groups, this depends on the MASK setting
-	mask := m[acl.TagMask]
-	if len(mask) > 0 {
-		// mask
-		for _, g := range groupids {
-			if x := m[acl.TagGroupObj][0]; x.Qualifier == g {
-				fmt.Printf("%s for %q on %q\tvia ACL_GROUP_OBJ (%s is group-owner)\n", toString(x.Perms), username, path, username)
-				fmt.Printf("%s effective via mask\n", toString(mask[0].Perms))
-				return
+		m, err := aclToMap(a, path)
+		if err != nil {
+			log.Fatalf("%s: %s", cmd, err)
+		}
+		// TODO(miek): we stat again
+		dir := "d"
+		stat, _ := os.Stat(path)
+		if !stat.IsDir() {
+			dir = "-"
+		}
+
+		mask := m[acl.TagMask]
+		prefix := func(p os.FileMode) string {
+			return fmt.Sprintf("%s%s %s %-*s", dir, toString(p), username, length, path)
+		}
+
+		// First check ACL_USER_OBJ
+		if x := m[acl.TagUserObj][0]; x.Qualifier == u.Uid {
+			fmt.Printf("%s # ACL_USER_OBJ (%s is owner)\n", prefix(x.Perms), username)
+			continue
+		}
+
+		// Next ACL_USER (specific users that may have access)
+		for _, e := range m[acl.TagUser] {
+			if e.Qualifier == u.Uid {
+				if len(mask) > 0 {
+					fmt.Printf("%s # ACL_USER (%s with %s%s)\n", prefix(mask[0].Perms), username, dir, toString(e.Perms))
+					continue
+				}
+				fmt.Printf("%s # ACL_USER (%s is in user ACL)\n", prefix(e.Perms), username)
+				continue
 			}
 		}
-		// if still here, we check the ACL groups (is this quadratic??)
-		for _, g := range groupids {
-			for _, e := range m[acl.TagGroup] {
-				if e.Qualifier == g {
-					// print ACL mask
-					group, _ := user.LookupGroupId(g)
-					fmt.Printf("%s for %q on %q\tvia ACL_GROUP (%s is in group ACL list via %s)\n", toString(e.Perms), username, path, username, group.Name)
-					fmt.Printf("%s effective via mask\n", toString(mask[0].Perms))
-					return
+
+		// If still here we are checking the groups, this depends on the MASK setting
+		if len(mask) > 0 {
+			// mask
+			for _, g := range groupids {
+				if x := m[acl.TagGroupObj][0]; x.Qualifier == g {
+					fmt.Printf("%s # ACL_GROUP_OBJ (%s is group-owner via %q with %s%s)\n", prefix(mask[0].Perms), username, g, dir, toString(x.Perms))
+					continue
+				}
+			}
+			// if still here, we check the ACL groups (is this quadratic??)
+			for _, g := range groupids {
+				for _, e := range m[acl.TagGroup] {
+					if e.Qualifier == g {
+						// print ACL mask
+						group, _ := user.LookupGroupId(g)
+						fmt.Printf("%s # ACL_GROUP (%s via %q with %s%s)\n", prefix(mask[0].Perms), username, group.Name, dir, toString(e.Perms))
+						continue
+					}
+				}
+			}
+		} else {
+			for _, g := range groupids {
+				if x := m[acl.TagGroupObj][0]; x.Qualifier == g {
+					fmt.Printf("%s # ACL_GROUP_OBJ (%s is group-owner via %q)\n", prefix(x.Perms), username, g)
+					continue
 				}
 			}
 		}
-	} else {
-		for _, g := range groupids {
-			if x := m[acl.TagGroupObj][0]; x.Qualifier == g {
-				fmt.Printf("%s for %q on %q\tvia ACL_GROUP_OBJ (%s is group-owner)\n", toString(x.Perms), username, path, username)
-				return
-			}
-		}
-	}
 
-	// still here, then other applies
-	other := m[acl.TagOther][0]
-	fmt.Printf("%s for %q on %q\tvia ACL_OTHER\n", toString(other.Perms), username, path)
+		// still here, then other applies
+		other := m[acl.TagOther][0]
+		fmt.Printf("%s # ACL_OTHER\n", prefix(other.Perms))
+	}
 }
 
 // aclToMap maps an ACL to map for easier access. It also stats path to get owner and group info.
@@ -118,11 +136,10 @@ func aclToMap(a acl.ACL, path string) (map[acl.Tag]acl.ACL, error) {
 		return nil, fmt.Errorf("cannot stat %q", path)
 	}
 
-	// default tag as well? get default acl's ionly of path is dir?
-
+	// TODO(miek): default tag as well? get default acl's or only of path is dir?
 	m := map[acl.Tag]acl.ACL{}
 	for i := range a {
-		m[a[i].Tag] = a
+		m[a[i].Tag] = append(m[a[i].Tag], a[i])
 	}
 
 	m[acl.TagUserObj][0].Qualifier = strconv.FormatUint(uint64(sys.Uid), 10)
