@@ -19,7 +19,7 @@ why - explain why a user has access to a file taking access control lists into a
 set on the file they are taking into account. If no *FILE* is given the current directory is used.
 For each *FILE* given it outputs a line:
 
-    -rw- miek file # ACL_USER_OBJ (miek is owner)
+    -rw- miek file # ACL_USER_OBJ (owner)
 
 Which states:
 
@@ -43,18 +43,19 @@ the actual (unmasked) permission.
 
 **Why** can output the following:
 
-    -r-- user file # ACL_GROUP (user via "xxxxx" with -rw-)
-    -r-- user file # ACL_GROUP_OBJ (user is group-owner via "xxxxxx" with -rw-)
-    -r-- user file # ACL_USER_OBJ (user is owner)
-    -r-- user file # ACL_USER  (user with -rw-)
+    -r-- user file # ACL_GROUP (via "xxxxx" with -rw-)
+    -r-- user file # ACL_GROUP_OBJ (via "xxxxxx" with -rw-)
+    -r-- user file # ACL_USER_OBJ (owner)
+    -r-- user file # ACL_USER  (with -rw-)
     -r-- user file # ACL_OTHER
 
 # EXAMPLES
 
-Show the access the *grafana* user has on `my-file`:
+Show the access the *grafana* user has on `file` the masked permissions are equal to the permission
+as expressed in the group ACL.
 
     % why grafana file
-    -rw- grafana file # ACL_GROUP (grafana is in group ACL via "grafana" with -rw-)
+    -rw- grafana file # ACL_GROUP (via "grafana" with -rw-)
 
 # ALSO SEE
 

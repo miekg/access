@@ -19,7 +19,7 @@ For each \fIFILE\fP given it outputs a line:
 .RS
 
 .nf
-\-rw\- miek file # ACL\_USER\_OBJ (miek is owner)
+\-rw\- miek file # ACL\_USER\_OBJ (owner)
 
 .fi
 .RE
@@ -50,10 +50,10 @@ the actual (unmasked) permission.
 .RS
 
 .nf
-\-r\-\- user file # ACL\_GROUP (user via "xxxxx" with \-rw\-)
-\-r\-\- user file # ACL\_GROUP\_OBJ (user is group\-owner via "xxxxxx" with \-rw\-)
-\-r\-\- user file # ACL\_USER\_OBJ (user is owner)
-\-r\-\- user file # ACL\_USER  (user with \-rw\-)
+\-r\-\- user file # ACL\_GROUP (via "xxxxx" with \-rw\-)
+\-r\-\- user file # ACL\_GROUP\_OBJ (via "xxxxxx" with \-rw\-)
+\-r\-\- user file # ACL\_USER\_OBJ (owner)
+\-r\-\- user file # ACL\_USER  (with \-rw\-)
 \-r\-\- user file # ACL\_OTHER
 
 .fi
@@ -61,14 +61,15 @@ the actual (unmasked) permission.
 
 .SH "EXAMPLES"
 .PP
-Show the access the \fIgrafana\fP user has on \fB\fCmy-file\fR:
+Show the access the \fIgrafana\fP user has on \fB\fCfile\fR the masked permissions are equal to the permission
+as expressed in the group ACL.
 
 .PP
 .RS
 
 .nf
 % why grafana file
-\-rw\- grafana file # ACL\_GROUP (grafana is in group ACL via "grafana" with \-rw\-)
+\-rw\- grafana file # ACL\_GROUP (via "grafana" with \-rw\-)
 
 .fi
 .RE
