@@ -1,0 +1,30 @@
+#!/usr/bin/make -f
+
+SOURCE_VERSION  := $(shell dpkg-parsechangelog --show-field version | sed  's/-[0-9]cncz[0-9][0-9]*//')
+SOURCE          := https://github.com/miekg/access/archive/refs/tags/v$(SOURCE_VERSION).tar.gz
+BINARY          := access
+
+PKG_NAME        := $(shell dpkg-parsechangelog --show-field source)
+DOWNLOAD        := $(shell basename $(SOURCE) )
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_clean
+	if [ ! -f $(DOWNLOAD) ]; then curl -L $(SOURCE) > $(DOWNLOAD); fi
+	rm -rf pkg; mkdir pkg
+	tar xvf $(DOWNLOAD) -C pkg --strip-components 1
+	( cd pkg/; go get; CGO_ENABLED=0 go build -o $(BINARY) )
+	cp pkg/$(BINARY) .
+	cp pkg/access.1 .
+
+override_dh_auto_clean:
+	rm -rf debian/$(PKG_NAME)/usr/bin
+
+override_dh_auto_install:
+	mkdir -p debian/$(PKG_NAME)/usr/bin && \
+	cp $(BINARY) debian/$(PKG_NAME)/usr/bin
+	for doc in $(shell cat debian/docs); do cp pkg/$$doc . ; done
+
+override_dh_strip:

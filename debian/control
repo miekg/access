@@ -1,0 +1,15 @@
+Source: access
+Section: utils
+Priority: extra
+Maintainer: Miek Gieben <miek@miek.nl>
+Uploaders: Miek Gieben <miek@miek.nl>
+Build-Depends: debhelper (>= 9.0.0)
+Standards-Version: 3.9.8
+Vcs-Git: https://github.com/miekg/access
+Homepage: https://github.com/miekg/access
+
+Package: access
+Architecture: any
+Description: Access explains how a user as access to a file.
+ With access you get detailed information on file access taking access control
+ lists into account.
