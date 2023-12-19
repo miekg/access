@@ -17,6 +17,8 @@ access - explain how a user has access to a file taking access control lists int
 
 **Access** will print what access **USERNAME** has on each *FILE*. If Access Control Lists (ACLs) are
 set on the file they are taking into account. If no *FILE* is given the current directory is used.
+**Access** will always follow symlinks and report on the target.
+
 For each *FILE* given it outputs a line:
 
     -rw- miek file # ACL_USER_OBJ (owner)

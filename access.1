@@ -13,6 +13,9 @@ access \- explain how a user has access to a file taking access control lists in
 .PP
 \fBAccess\fP will print what access \fBUSERNAME\fP has on each \fIFILE\fP. If Access Control Lists (ACLs) are
 set on the file they are taking into account. If no \fIFILE\fP is given the current directory is used.
+\fBAccess\fP will always follow symlinks and report on the target.
+
+.PP
 For each \fIFILE\fP given it outputs a line:
 
 .PP
