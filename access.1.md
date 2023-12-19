@@ -25,7 +25,7 @@ Which states:
 
 `-rw-`
 
-: the first character is 'd' for directories and '-' for files. Like ls(1). The next 3 are the
+: the first character is 'd' for directories and '-' for files, like ls(1). The next 3 are the
 effective permissions (from the mask) for this user (read, write, execute).
 
 `miek`
@@ -39,7 +39,7 @@ effective permissions (from the mask) for this user (read, write, execute).
 `# ACL_....`
 
 : explanation on why this user access. If this ends `with -rw-` (or any other permissions) it lists
-the actual (unmasked) permission.
+the actual, unmasked permission.
 
 **Access** can output the following:
 
@@ -51,7 +51,7 @@ the actual (unmasked) permission.
 
 # EXAMPLES
 
-Show the access the *grafana* user has on `file` the masked permissions are equal to the permission
+Show the access the *grafana* user has on `file` the masked permissions are equal to the permissions
 as expressed in the group ACL.
 
     % access grafana file
@@ -59,4 +59,4 @@ as expressed in the group ACL.
 
 # ALSO SEE
 
-acl(5) explains the algorithm of `access`.
+acl(5) explains the algorithm of `access`. Use getfacl(1) to lists the ACLs directly.
