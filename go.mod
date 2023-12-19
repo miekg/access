@@ -1,4 +1,4 @@
-module github.com/miekg/why
+module github.com/miekg/access
 
 go 1.21.5
 
