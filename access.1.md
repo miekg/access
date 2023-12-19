@@ -25,8 +25,8 @@ Which states:
 
 `-rw-`
 
-: the first character is 'd' for directories and '-' for files, like ls(1). The next 3 are the
-effective permissions (from the mask) for this user (read, write, execute).
+: the first character is 'd' for directories, '-' for files, 'l' for symbolic links, like ls(1). The
+next 3 are the effective permissions (from the ACL mask) for this user (`r` read, `w` write, `x` execute).
 
 `miek`
 

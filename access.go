@@ -66,6 +66,9 @@ func main() {
 		if !stat.IsDir() {
 			dir = "-"
 		}
+		if stat.Mode()&os.ModeSymlink == os.ModeSymlink {
+			dir = "l"
+		}
 
 		mask := m[acl.TagMask]
 		prefix := func(p os.FileMode) string {
