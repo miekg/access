@@ -16,7 +16,7 @@ access - explain how a user has access to a file taking access control lists int
 # DESCRIPTION
 
 **Access** will print what access **USERNAME** has on each *FILE*. If Access Control Lists (ACLs) are
-set on the file they are taking into account. If no *FILE* is given the current directory is used.
+set on the file they are taken into account. If no *FILE* is given the current directory is used.
 **Access** will always follow symlinks and report on the target.
 
 For each *FILE* given it outputs a line:
@@ -28,7 +28,7 @@ Which states:
 `-rw-`
 
 : the first character is 'd' for directories, '-' for files, 'l' for symbolic links, like ls(1). The
-next 3 are the effective permissions (from the ACL mask) for this user (`r` read, `w` write, `x` execute).
+next 3 are the *effective* permissions (from the ACL mask) for this user (`r` read, `w` write, `x` execute).
 
 `miek`
 
